@@ -6,10 +6,12 @@
 %%%%%%%%%%%%%%
 % Parameters %
 %%%%%%%%%%%%%%
+% trackIn - data input
 % tolerance - defines how far fitted curve can deviate from track
 % data. Lower number means closer fit.
 % threshold - defines what range of angles is treated as a turn. Lower
 % number means more angles are treated as turning points.
+% turn - Output straight edges if turn=0. Output turns if turn=1.
 
 % Written by David Yang, contact at dayy@linux.ucla.edu
 function tracks = straightTracks(trackIn, tolerance, threshold, turn)
@@ -32,9 +34,13 @@ function tracks = straightTracks(trackIn, tolerance, threshold, turn)
     figure;
     plot(grad);
     
-    
-    grad(abs(grad)>threshold) = NaN;
-    grad(abs(grad)<threshold) = 1;
+    if turn == 0
+        grad(abs(grad)>threshold) = NaN;
+        grad(abs(grad)<threshold) = 1;
+    else
+        grad(abs(grad)>threshold) = 1;
+        grad(abs(grad)<threshold) = NaN;
+    end
     
     % Splitting straight tracks
     tracks = {};
