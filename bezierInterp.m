@@ -23,12 +23,22 @@ nonemptyIdx = ~cellfun('isempty',varargin);
 defaultValues(nonemptyIdx) = varargin(nonemptyIdx);
 [t] = deal(defaultValues{:});
 % % --------------------------------
-M=[-1  3 -3 1;
-    3 -6  3 0;
-   -3  3  0 0;
-    1  0  0 0];
-for k=1:length(t)
-    Q(k,:)=[t(k)^3 t(k)^2 t(k) 1]*M*[P0;P1;P2;P3];
+
+if isempty(P2)
+    M=[-6 6;
+        6 0];
+    for k=1:length(t)
+        Q(k,:)=[t(k) 1]*M*[P0;P1];
+    end
+    
+else
+    M=[-1  3 -3 1;
+        3 -6  3 0;
+       -3  3  0 0;
+        1  0  0 0];
+    for k=1:length(t)
+        Q(k,:)=[t(k)^3 t(k)^2 t(k) 1]*M*[P0;P1;P2;P3];
+    end
 end
 % % Ref: Mathematical Elements of Computer Graphics by
 % %      David F. Rogers and J. Alan Adams (pg. 296)
@@ -39,7 +49,7 @@ end
 % c3 = -P0 + 3*(P1-P2) + P3;
 % c2 = 3*(P0 - (2*P1)+P2); 
 % c1 = 3*(P1 - P0);
-% c0 = P0;
+% c0 = P0;0
 % for k=1:length(t)
 %     Q(k,:)=((c3*t(k)+c2)*t(k)+c1)*t(k) + c0;    
 % end

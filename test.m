@@ -1,12 +1,12 @@
 close all, clc, clear all 
 
-threshold = 0.25;
+threshold = 0.4;
 
-stageDxata = xlsread('Stage_Data.xls');
+stageData = xlsread('Stage_Data.xlsx');
 x = stageData(:,2);
 y = stageData(:,3);
 
-MxAllowSqD=x(1,1)/100; % Max. allowed Square Distance between original and fitted data
+MxAllowSqD=0; % Max. allowed Square Distance between original and fitted data
 
 Mat = [ y x ];
 

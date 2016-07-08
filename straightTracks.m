@@ -12,7 +12,7 @@
 % number means more angles are treated as turning points.
 
 % Written by David Yang, contact at dayy@linux.ucla.edu
-function tracks = straightTracks(trackIn, tolerance, threshold)
+function tracks = straightTracks(trackIn, tolerance, threshold, turn)
     [height,~] = size(trackIn);
     ibi = [1;height];
     
@@ -20,13 +20,10 @@ function tracks = straightTracks(trackIn, tolerance, threshold)
     [p0mat,p1mat,p2mat,p3mat,fbi]=bzapproxu(trackIn,tolerance,ibi);
     
     % Double differentiation
-    p0matd = bezierDifferentiate(bezierDifferentiate(p0mat));
-    p1matd = bezierDifferentiate(bezierDifferentiate(p1mat));
-    p2matd = bezierDifferentiate(bezierDifferentiate(p2mat));
-    p3matd = bezierDifferentiate(bezierDifferentiate(p3mat));
-    [MatI]=BezierInterpCPMatSegVec(p0matd,p1matd,p2matd,p3matd,fbi);
+    [p0matd,p1matd] = bezierDifferentiate(p0mat,p1mat,p2mat,p3mat);
+    [MatI]=BezierInterpCPMatSegVec(p0matd,p1matd,[],[],fbi);
     figure;
-    plot(MatI);
+    plot(MatI(:,2),MatI(:,1));
     
     % Gradient finding
     grad = MatI(:,1)/MatI(:,2);
@@ -34,6 +31,7 @@ function tracks = straightTracks(trackIn, tolerance, threshold)
     grad = grad(:,~temp);
     figure;
     plot(grad);
+    
     
     grad(abs(grad)>threshold) = NaN;
     grad(abs(grad)<threshold) = 1;
@@ -45,13 +43,13 @@ function tracks = straightTracks(trackIn, tolerance, threshold)
     tracksize = 1;
     for i = 1:height
         if curve == 0
-            if isnan(grad(height - i +1))
+            if isnan(grad(i))
                 tracks = [tracks trackIn(start:i-1,:)];
                 curve = 1;
                 tracksize = tracksize + 1;
             end
         else
-            if ~isnan(grad(height - i +1))
+            if ~isnan(grad(i))
                 curve = 0;
                 start = i;
             end

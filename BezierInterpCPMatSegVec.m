@@ -47,8 +47,11 @@ for k=1:length(NVec)-1
     if (~firstSegment)
         tloc=tloc(2:end);
     end  
-    
-    MatLocalInterp=bezierInterp( p0mat(k,:),p1mat(k,:),p2mat(k,:),p3mat(k,:),tloc);    
+    if isempty(p2mat)
+        MatLocalInterp=bezierInterp( p0mat(k,:),p1mat(k,:),[],[],tloc);
+    else
+        MatLocalInterp=bezierInterp( p0mat(k,:),p1mat(k,:),p2mat(k,:),p3mat(k,:),tloc);    
+    end
     MatGlobalInterp=[MatGlobalInterp; MatLocalInterp]; % row wise concatenation
     firstSegment=0;
 end
